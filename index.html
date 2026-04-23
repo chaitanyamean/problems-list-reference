@@ -1521,6 +1521,363 @@ class Solution {
             <div class="content-block"><strong>Time:</strong> O(N) — visits each node once.<br><strong>Space:</strong> O(H) recursion stack — O(log N) balanced, O(N) worst case for a skewed tree.</div>
         </div>
 
+            <div class="problem-card" id="226">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">226. Invert Binary Tree</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty Tree (<code>root == null</code>), Single Node (inverting a leaf is a no-op), Already-symmetric tree (inverting produces an equal tree), Deeply skewed tree (recursive version risks <code>StackOverflowError</code>).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Reversing hierarchical UI layouts (e.g. right-to-left language rendering), generating mirror images of expression trees, flipping decision tree evaluations, the classic Homebrew-at-Google interview story that made this problem famous.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Serialize the tree into a list, manually build a brand new tree that's the mirror, return the new root. Allocates O(N) extra nodes, throws away the input — wasteful when an in-place swap is possible.</div>
+<pre class="brute"><code>// Brute Force: materialize values, then rebuild a mirrored tree from scratch
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+
+        // Collect nodes in level order
+        List&lt;TreeNode&gt; level = new ArrayList&lt;&gt;();
+        level.add(root);
+        int i = 0;
+        while (i &lt; level.size()) {
+            TreeNode n = level.get(i++);
+            if (n != null) {
+                level.add(n.left);
+                level.add(n.right);
+            }
+        }
+
+        // Build a mirror-copy tree (new nodes, swapped children)
+        return buildMirror(root);
+    }
+
+    private TreeNode buildMirror(TreeNode node) {
+        if (node == null) return null;
+        TreeNode copy = new TreeNode(node.val);
+        copy.left  = buildMirror(node.right); // swap while copying
+        copy.right = buildMirror(node.left);
+        return copy;
+    }
+}
+// Time: O(N), Space: O(N) for the new tree + O(H) call stack
+// Correct, but allocates a full second tree when we could just swap pointers
+// inside the existing tree.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Bottom-Up Recursive Mutation</strong> — the same "mutate via recursion" template used by LC 114 (Flatten), LC 617 (Merge Trees), and LC 538 (BST to Greater Tree). Recurse on children first, then do work at the current node.</div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">At every node ask: "What does it mean to invert the subtree rooted here?" Answer: (1) recursively invert my left and right subtrees, (2) swap them. Return the node. The swap happens bottom-up — deepest nodes swap first, root swaps last, as the call stack unwinds.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+
+        // Recurse on both subtrees FIRST
+        TreeNode leftInverted  = invertTree(root.left);
+        TreeNode rightInverted = invertTree(root.right);
+
+        // Then swap them at the current node
+        root.left  = rightInverted;
+        root.right = leftInverted;
+
+        return root;
+    }
+}
+// Compact equivalent (same logic, watch the ordering — save root.left to temp
+// BEFORE overwriting it, otherwise you invert the right subtree twice):
+//
+// if (root == null) return null;
+// TreeNode temp = root.left;
+// root.left  = invertTree(root.right);
+// root.right = invertTree(temp);
+// return root;</code></pre>
+
+            <div class="section-title">🔁 Iterative Alternative (BFS)</div>
+            <div class="content-block">When the tree is deeply skewed, the recursive call stack can blow. A queue-based BFS does the same work with heap memory instead.</div>
+<pre class="optimal"><code>class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return null;
+
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+
+            // Swap children
+            TreeNode temp = node.left;
+            node.left  = node.right;
+            node.right = temp;
+
+            if (node.left  != null) queue.offer(node.left);
+            if (node.right != null) queue.offer(node.right);
+        }
+        return root;
+    }
+}
+// Same O(N) time. Space is O(W) where W = max tree width,
+// which is bounded by the heap instead of the JVM stack.</code></pre>
+
+            <div class="section-title">🎬 Animation — Watch the Recursion</div>
+            <div class="content-block">Walk through invertTree() step-by-step on a tree. Teal = currently running. Blue = frames paused on the call stack above. Amber = the swap happening at that node. Notice: swaps happen deepest-first as the stack unwinds.</div>
+            <div class="invert-anim" aria-label="Interactive tree inversion animation" style="background: #f1f5f9; border-radius: 8px; padding: 16px; margin-left: 1.8rem;">
+                <svg class="invert-tree-svg" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; background: #ffffff; border-radius: 6px; padding: 8px 0; display: block;">
+                    <g class="invert-edges"></g>
+                    <g class="invert-nodes"></g>
+                </svg>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 8px;">
+                    <span class="invert-progress" style="font-size: 12px; color: #64748b;">Step 0 of 0</span>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button class="invert-prev" type="button" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px;">← Prev</button>
+                        <button class="invert-next" type="button" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px;">Next →</button>
+                        <button class="invert-reset" type="button" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px;">Reset</button>
+                        <button class="invert-auto" type="button" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px;">▶ Auto</button>
+                    </div>
+                </div>
+
+                <div style="background: #ffffff; border-radius: 6px; padding: 10px 14px; margin-top: 10px; min-height: 48px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;">What's happening</div>
+                    <div class="invert-narration" style="font-size: 13px; color: #334155; line-height: 1.5;">Press Next (or Auto) to begin.</div>
+                </div>
+
+                <div style="background: #ffffff; border-radius: 6px; padding: 10px 14px; margin-top: 8px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">Call stack (top = running)</div>
+                    <div class="invert-stack"></div>
+                </div>
+            </div>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N) — every node is visited exactly once.<br><strong>Space:</strong> O(H) for recursion (O(log N) balanced, O(N) skewed), or O(W) for the BFS queue where W is max tree width.</div>
+        </div>
+    
+<script>
+// Invert Binary Tree animation — scoped to .invert-anim so it won't collide
+// with other scripts on the page.
+(function () {
+    const roots = document.querySelectorAll('.invert-anim');
+    roots.forEach(initAnim);
+
+    function initAnim(rootEl) {
+        const INITIAL = [
+            { id: 'A', val: 4, x: 340, y: 50,  left: 'B', right: 'C' },
+            { id: 'B', val: 2, x: 200, y: 130, left: 'D', right: 'E' },
+            { id: 'C', val: 7, x: 480, y: 130, left: 'F', right: 'G' },
+            { id: 'D', val: 1, x: 130, y: 220, left: null, right: null },
+            { id: 'E', val: 3, x: 270, y: 220, left: null, right: null },
+            { id: 'F', val: 6, x: 410, y: 220, left: null, right: null },
+            { id: 'G', val: 9, x: 550, y: 220, left: null, right: null },
+        ];
+
+        // Per-node color palette (works with or without dark theme)
+        const PALETTE = {
+            gray:  { fill: '#f1f5f9', stroke: '#94a3b8', text: '#334155' },
+            teal:  { fill: '#ccfbf1', stroke: '#0d9488', text: '#0f766e' },
+            blue:  { fill: '#dbeafe', stroke: '#3b82f6', text: '#1e40af' },
+            amber: { fill: '#fef3c7', stroke: '#d97706', text: '#92400e' },
+        };
+
+        const clone = (arr) => arr.map(n => ({ ...n }));
+        let tree = clone(INITIAL);
+        const byId = () => Object.fromEntries(tree.map(n => [n.id, n]));
+
+        const steps = [];
+
+        function buildSteps(nodeId, stack) {
+            if (nodeId == null) {
+                steps.push({
+                    current: null,
+                    stack: [...stack],
+                    narration: "Hit null — return null back up to the caller."
+                });
+                return;
+            }
+            const node = INITIAL.find(n => n.id === nodeId);
+            stack = [...stack, nodeId];
+
+            steps.push({
+                current: nodeId,
+                stack: [...stack],
+                narration: "Enter invertTree(" + node.val + "). Node isn't null — first, invert the LEFT subtree."
+            });
+
+            buildSteps(node.left, stack);
+
+            steps.push({
+                current: nodeId,
+                stack: [...stack],
+                narration: "Back at invertTree(" + node.val + "). Left subtree done. Now invert the RIGHT subtree."
+            });
+
+            buildSteps(node.right, stack);
+
+            steps.push({
+                current: nodeId,
+                stack: [...stack],
+                swap: nodeId,
+                narration: "Both subtrees inverted. Now SWAP node " + node.val + "'s left and right children."
+            });
+
+            steps.push({
+                current: nodeId,
+                stack: [...stack],
+                narration: "Return the (now-inverted) subtree rooted at " + node.val + " back to the caller."
+            });
+        }
+
+        buildSteps('A', []);
+        steps.push({ current: null, stack: [], narration: "Done! Every parent's children are flipped. The tree is fully inverted." });
+
+        const svg      = rootEl.querySelector('.invert-tree-svg');
+        const edgesG   = rootEl.querySelector('.invert-edges');
+        const nodesG   = rootEl.querySelector('.invert-nodes');
+        const narrEl   = rootEl.querySelector('.invert-narration');
+        const stackEl  = rootEl.querySelector('.invert-stack');
+        const progress = rootEl.querySelector('.invert-progress');
+
+        function render(step) {
+            edgesG.innerHTML = '';
+            nodesG.innerHTML = '';
+            const map = byId();
+
+            for (const n of tree) {
+                if (n.left) {
+                    const c = map[n.left];
+                    edgesG.insertAdjacentHTML('beforeend',
+                        '<line x1="' + n.x + '" y1="' + n.y + '" x2="' + c.x + '" y2="' + c.y + '" stroke="#cbd5e1" stroke-width="1.5"/>');
+                }
+                if (n.right) {
+                    const c = map[n.right];
+                    edgesG.insertAdjacentHTML('beforeend',
+                        '<line x1="' + n.x + '" y1="' + n.y + '" x2="' + c.x + '" y2="' + c.y + '" stroke="#cbd5e1" stroke-width="1.5"/>');
+                }
+            }
+
+            for (const n of tree) {
+                const isCurrent  = step && step.current === n.id;
+                const isSwapping = step && step.swap === n.id;
+                const isOnStack  = step && step.stack.includes(n.id);
+
+                let p = PALETTE.gray;
+                if (isSwapping) p = PALETTE.amber;
+                else if (isCurrent) p = PALETTE.teal;
+                else if (isOnStack) p = PALETTE.blue;
+
+                nodesG.insertAdjacentHTML('beforeend',
+                    '<circle cx="' + n.x + '" cy="' + n.y + '" r="22" fill="' + p.fill + '" stroke="' + p.stroke + '" stroke-width="2"/>' +
+                    '<text x="' + n.x + '" y="' + (n.y + 5) + '" text-anchor="middle" font-size="16" font-weight="600" fill="' + p.text + '" font-family="system-ui, sans-serif">' + n.val + '</text>'
+                );
+            }
+        }
+
+        function renderStack(step) {
+            if (!step || step.stack.length === 0) {
+                stackEl.innerHTML = '<div style="font-size: 12px; color: #94a3b8; font-family: monospace;">(empty)</div>';
+                return;
+            }
+            const map = byId();
+            const frames = step.stack.map((id, i) => {
+                const v = map[id].val;
+                const active = i === step.stack.length - 1;
+                const baseStyle = 'font-family: monospace; font-size: 12px; padding: 3px 8px; border-radius: 3px; margin-bottom: 3px;';
+                const activeStyle = active
+                    ? 'background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6;'
+                    : 'background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0;';
+                return '<div style="' + baseStyle + activeStyle + '">invertTree(' + v + ')' + (active ? '  ← running' : '') + '</div>';
+            }).reverse();
+            stackEl.innerHTML = frames.join('');
+        }
+
+        let idx = 0;
+        let timer = null;
+
+        function applyStep(step) {
+            if (step.swap) {
+                const node = tree.find(n => n.id === step.swap);
+                const tmp = node.left;
+                node.left = node.right;
+                node.right = tmp;
+                swapSubtreePositions(node);
+            }
+        }
+
+        function swapSubtreePositions(node) {
+            const map = byId();
+            const leftChild  = node.left  ? map[node.left]  : null;
+            const rightChild = node.right ? map[node.right] : null;
+            if (leftChild && rightChild) {
+                const dx = rightChild.x - leftChild.x;
+                const leftSet  = collectDescendants(leftChild.id);
+                const rightSet = collectDescendants(rightChild.id);
+                for (const id of leftSet) {
+                    tree.find(n => n.id === id).x += dx;
+                }
+                for (const id of rightSet) {
+                    tree.find(n => n.id === id).x -= dx;
+                }
+            }
+        }
+
+        function collectDescendants(id) {
+            const result = [id];
+            const node = tree.find(n => n.id === id);
+            if (node.left)  result.push.apply(result, collectDescendants(node.left));
+            if (node.right) result.push.apply(result, collectDescendants(node.right));
+            return result;
+        }
+
+        function goTo(newIdx) {
+            tree = clone(INITIAL);
+            for (let i = 0; i <= newIdx && i < steps.length; i++) {
+                applyStep(steps[i]);
+            }
+            idx = newIdx;
+            const step = steps[idx];
+            render(step);
+            renderStack(step);
+            narrEl.textContent = step.narration;
+            progress.textContent = 'Step ' + (idx + 1) + ' of ' + steps.length;
+        }
+
+        rootEl.querySelector('.invert-next').addEventListener('click', () => {
+            if (idx < steps.length - 1) goTo(idx + 1);
+        });
+        rootEl.querySelector('.invert-prev').addEventListener('click', () => {
+            if (idx > 0) goTo(idx - 1);
+        });
+        rootEl.querySelector('.invert-reset').addEventListener('click', () => {
+            if (timer) { clearInterval(timer); timer = null; }
+            rootEl.querySelector('.invert-auto').textContent = '▶ Auto';
+            goTo(0);
+        });
+        rootEl.querySelector('.invert-auto').addEventListener('click', () => {
+            const btn = rootEl.querySelector('.invert-auto');
+            if (timer) {
+                clearInterval(timer); timer = null;
+                btn.textContent = '▶ Auto';
+            } else {
+                btn.textContent = '⏸ Pause';
+                timer = setInterval(() => {
+                    if (idx >= steps.length - 1) {
+                        clearInterval(timer); timer = null;
+                        btn.textContent = '▶ Auto';
+                        return;
+                    }
+                    goTo(idx + 1);
+                }, 1200);
+            }
+        });
+
+        goTo(0);
+    }
+})();
+</script>
+
 
     </div>
     <script>
