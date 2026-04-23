@@ -1,0 +1,1317 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Master Guide</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+        .max-w-prose {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .toc {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .toc h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+            column-count: 2;
+        }
+        .toc li {
+            margin-bottom: 0.5rem;
+            break-inside: avoid;
+        }
+        .toc a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .problem-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .problem-title {
+            color: #0f172a;
+            font-size: 1.75rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+            margin-top: 0;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .content-block {
+            margin-left: 1.8rem;
+            color: #475569;
+        }
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        pre.brute {
+            border-left: 4px solid #ef4444;
+            opacity: 0.92;
+        }
+        pre.optimal {
+            border-left: 4px solid #10b981;
+        }
+        .code-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        .code-label.brute {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .code-label.optimal {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .filter-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .filter-bar label {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .filter-bar select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-main);
+            cursor: pointer;
+            min-width: 200px;
+        }
+        .filter-bar select:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 1px;
+        }
+        .filter-count {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-prose">
+        <header>
+            <h1>LeetCode Master Guide</h1>
+            <p class="subtitle">Structured 7-Step Algorithmic Problem Breakdowns</p>
+        </header>
+
+        <div class="filter-bar">
+            <label for="category-filter">Filter by category:</label>
+            <select id="category-filter">
+                <option value="all">All</option>
+            </select>
+            <span class="filter-count" id="filter-count"></span>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#61">61. Rotate List</a></li>
+<li><a href="#24">24. Swap Nodes in Pairs</a></li>
+<li><a href="#735">735. Asteroid Collision</a></li>
+<li><a href="#20">20. Valid Parentheses</a></li>
+<li><a href="#503">503. Next Greater Element II</a></li>
+<li><a href="#94">94. Binary Tree Inorder Traversal</a></li>
+<li><a href="#144">144. Binary Tree Preorder Traversal</a></li>
+<li><a href="#145">145. Binary Tree Postorder Traversal</a></li>
+<li><a href="#100">100. Same Tree</a></li>
+<li><a href="#496">496. Next Greater Element I</a></li>
+<li><a href="#739">739. Daily Temperatures</a></li>
+<li><a href="#84">84. Largest Rectangle in Histogram</a></li>
+<li><a href="#203">203. Remove Linked List Elements</a></li>
+<li><a href="#3217">3217. Delete Nodes From Linked List Present in Array</a></li>
+<li><a href="#21">21. Merge Two Sorted Lists</a></li>
+<li><a href="#682">682. Baseball Game</a></li>
+
+            </ul>
+        </div>
+
+        
+        <div class="problem-card" id="61">
+            <span class="tag">Linked List</span>
+            <h2 class="problem-title">61. Rotate List</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty List (<code>head == null</code>), Single Node, Zero Rotations (<code>k == 0</code>).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Circular buffers in embedded systems, rotating banner ads, round-robin scheduling algorithms.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Move the last node to the front of the list, and run this operation $k$ times in a loop. Fails because $O(N)$ traversal $k$ times results in $O(N \times k)$ Time Limit Exceeded.</div>
+<pre class="brute"><code>// Brute Force: rotate one step at a time, k times
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+
+        for (int step = 0; step < k; step++) {
+            // Find the second-to-last node
+            ListNode prev = head;
+            while (prev.next.next != null) {
+                prev = prev.next;
+            }
+            ListNode last = prev.next;
+            prev.next = null;
+            last.next = head;
+            head = last;
+        }
+        return head;
+    }
+}
+// Time: O(N * k)  — TLE when k is huge
+// Space: O(1)</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Find Length & Make Circular</strong> (Two Pointers/Traversal).</div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">1. Get Length.<br>2. <code>k = k % length</code>.<br>3. Connect tail to head to make a circle.<br>4. Walk <code>length - k - 1</code> steps from head to find new tail. Set next to null.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head == null || head.next == null || k == 0) return head;
+
+        ListNode oldTail = head;
+        int length = 1;
+        while(oldTail.next != null) {
+            oldTail = oldTail.next;
+            length++;
+        }
+
+        k = k % length;
+        if(k == 0) return head;
+        
+        oldTail.next = head;
+
+        ListNode newTail = head;
+        for(int i = 0; i < length - k - 1; i++) {
+            newTail = newTail.next;
+        }
+
+        ListNode newHead = newTail.next; 
+        newTail.next = null;
+
+        return newHead;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(1)</div>
+        </div>
+    
+        <div class="problem-card" id="24">
+            <span class="tag">Linked List</span>
+            <h2 class="problem-title">24. Swap Nodes in Pairs</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty List, Single Node, Odd Number of Nodes.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Cryptographic Algorithms (data permutation), Network Packet Processing (endianness flipping).</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Iterate and swap the integer values inside the nodes. Inefficient for real-world nodes with massive data payloads.</div>
+<pre class="brute"><code>// Brute Force: swap values only, don't touch pointers
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode curr = head;
+        while (curr != null && curr.next != null) {
+            int tmp = curr.val;
+            curr.val = curr.next.val;
+            curr.next.val = tmp;
+            curr = curr.next.next;
+        }
+        return head;
+    }
+}
+// Time: O(N), Space: O(1)
+// Rejected in interviews: many problems specify "you may not modify the
+// values in the list's nodes — only nodes themselves may be changed."</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Dummy Node + Pointer Rewiring</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Attach a Dummy Node. Use a <code>prev</code> pointer. Rewire: <code>prev.next = second</code>, <code>first.next = second.next</code>, <code>second.next = first</code>. Move <code>prev = first</code>.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        
+        while (prev.next != null && prev.next.next != null) {
+            ListNode first = prev.next;
+            ListNode second = prev.next.next;
+            
+            prev.next = second;
+            first.next = second.next;
+            second.next = first;
+            
+            prev = first; 
+        }
+        return dummy.next;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(1)</div>
+        </div>
+    
+        <div class="problem-card" id="735">
+            <span class="tag">Stack</span>
+            <h2 class="problem-title">735. Asteroid Collision</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">No Collisions (<code>[-5, 5]</code>), The Bowling Ball (<code>[1, 2, 3, -100]</code>), Mutually Assured Destruction.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Physics Engines / Game Dev, Financial Order Books (matching engine mechanics).</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Scan array, resolve collision, delete loser, shift elements. O(N²) time complexity.</div>
+<pre class="brute"><code>// Brute Force: use an ArrayList and re-scan after every collision
+class Solution {
+    public int[] asteroidCollision(int[] asteroids) {
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        for (int a : asteroids) list.add(a);
+
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (int i = 0; i &lt; list.size() - 1; i++) {
+                int left = list.get(i), right = list.get(i + 1);
+                if (left &gt; 0 &amp;&amp; right &lt; 0) {
+                    if (Math.abs(left) &gt; Math.abs(right)) {
+                        list.remove(i + 1);
+                    } else if (Math.abs(left) &lt; Math.abs(right)) {
+                        list.remove(i);
+                    } else {
+                        list.remove(i + 1);
+                        list.remove(i);
+                    }
+                    changed = true;
+                    break; // restart scan
+                }
+            }
+        }
+        return list.stream().mapToInt(Integer::intValue).toArray();
+    }
+}
+// Time: O(N^2) — every collision triggers a full re-scan + shift
+// Space: O(N)</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>The Stack (LIFO)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Use a Stack for survivors. Collision ONLY happens if stack top is Right (+) and current is Left (-). Use a <code>while</code> loop to let negative asteroids smash through the stack. Use <code>Math.abs()</code> for size comparison.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> stack = new Stack<>();
+        for (int ast : asteroids) {
+            boolean destroyed = false;
+            while (!stack.isEmpty() && ast < 0 && stack.peek() > 0) {
+                if (stack.peek() < Math.abs(ast)) {
+                    stack.pop();
+                    continue; 
+                } else if (stack.peek() == Math.abs(ast)) {
+                    stack.pop();
+                }
+                destroyed = true;
+                break;
+            }
+            if (!destroyed) stack.push(ast);
+        }
+        int[] result = new int[stack.size()];
+        for (int i = result.length - 1; i >= 0; i--) result[i] = stack.pop();
+        return result;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
+        </div>
+    
+        <div class="problem-card" id="20">
+            <span class="tag">Stack</span>
+            <h2 class="problem-title">20. Valid Parentheses</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Odd Length String (instantly false), Starts with a Closing Bracket.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Compilers and Interpreters (syntax parsing), JSON Validation.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Continuously use <code>.replace("()", "")</code>. Fails because strings are immutable in Java.</div>
+<pre class="brute"><code>// Brute Force: repeatedly strip out matched adjacent pairs
+class Solution {
+    public boolean isValid(String s) {
+        int prevLen;
+        do {
+            prevLen = s.length();
+            s = s.replace("()", "").replace("[]", "").replace("{}", "");
+        } while (s.length() != prevLen);
+        return s.isEmpty();
+    }
+}
+// Time: O(N^2) — each .replace() is O(N) and rebuilds the whole string,
+//              and we may need up to N/2 passes
+// Space: O(N) — new string allocated on every replace call</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>The Stack (LIFO) + HashMap Mapping</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Map closing brackets to opening pairs. If opening, push to stack. If closing, pop the stack and check if it matches map value.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public boolean isValid(String s) {
+        if (s.length() % 2 != 0) return false;
+        Stack<Character> stack = new Stack<>();
+        Map<Character, Character> myMap = new HashMap<>();
+        myMap.put(')', '(');
+        myMap.put(']', '[');
+        myMap.put('}', '{');
+
+        for (char c : s.toCharArray()) {
+            if (myMap.containsKey(c)) {
+                if (stack.isEmpty() || stack.pop() != myMap.get(c)) return false;
+            } else {
+                stack.push(c);
+            }
+        }
+        return stack.isEmpty();
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
+        </div>
+    
+        <div class="problem-card" id="503">
+            <span class="tag">Monotonic Stack</span>
+            <h2 class="problem-title">503. Next Greater Element II</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Strictly Decreasing Array (needs wrap-around), All Identical Elements.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Stock Market algorithms (next price surge), Circular Server Resource Allocation.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Nested for loops to scan forward, wrapping back to index 0 manually. Results in O(N²) TLE.</div>
+<pre class="brute"><code>// Brute Force: for each index, scan up to N positions forward with wrap-around
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        Arrays.fill(result, -1);
+
+        for (int i = 0; i &lt; n; i++) {
+            for (int j = 1; j &lt; n; j++) {
+                int next = nums[(i + j) % n]; // wrap
+                if (next &gt; nums[i]) {
+                    result[i] = next;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+}
+// Time: O(N^2), Space: O(1) extra (output array not counted)</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Monotonic Decreasing Stack + Circular Array Traversal (%)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Use a stack to store <em>indices</em> of unresolved numbers. Loop up to <code>2 * n</code>. Use <code>i % n</code> to safely wrap around. While current number is greater than the value at <code>stack.peek()</code>, pop the stack and record.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        Deque<Integer> stack = new ArrayDeque<>();
+        int n = nums.length;
+        int[] result = new int[n];
+        Arrays.fill(result, -1);
+
+        for(int i = 0; i < 2 * n; i++) {
+            int current = nums[i % n];
+            while(!stack.isEmpty() && current > nums[stack.peek()]) {
+                result[stack.pop()] = current;
+            }
+            if(i < n) stack.push(i);
+        }   
+        return result;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
+        </div>
+    
+        <div class="problem-card" id="94">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">94. Binary Tree Inorder Traversal</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty Tree (<code>root == null</code>), Degenerate straight-line tree.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Binary Search Trees (returns perfectly sorted ascending data), Math Expression Trees.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Standard recursion. Can fail with a StackOverflowError if the tree is massively unbalanced.</div>
+<pre class="brute"><code>// Brute Force: recursive inorder traversal
+class Solution {
+    public List&lt;Integer&gt; inorderTraversal(TreeNode root) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        helper(root, result);
+        return result;
+    }
+
+    private void helper(TreeNode node, List&lt;Integer&gt; result) {
+        if (node == null) return;
+        helper(node.left, result);   // left
+        result.add(node.val);        // root
+        helper(node.right, result);  // right
+    }
+}
+// Time: O(N), Space: O(H) call stack
+// Correct, but a degenerate skewed tree (H ≈ N) can blow the JVM stack.
+// Iterative version below uses an explicit stack so depth is bounded by heap.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Depth-First Search (DFS) + Explicit Iterative Stack</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Mimic system call stack manually. Dive to bottom-left, pushing nodes to stack. When hitting null, pop, process value, shift pointer to right child.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public List&lt;Integer&gt; inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode current = root;
+        
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.left;
+            }
+            current = stack.pop();
+            result.add(current.val);
+            current = current.right;
+        }
+        return result;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(H) where H is tree height.</div>
+        </div>
+    
+        <div class="problem-card" id="100">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">100. Same Tree</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Both Trees are Empty, Only One Tree is Empty, Same Values but Different Structure.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">React Virtual DOM comparison, File System Comparisons, Compiler Abstract Syntax Trees (AST).</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Run an Inorder traversal on both trees and store values in Arrays. Compare arrays. Wastes memory and time.</div>
+<pre class="brute"><code>// Brute Force: serialize both trees, compare the serializations
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        List&lt;Integer&gt; a = new ArrayList&lt;&gt;();
+        List&lt;Integer&gt; b = new ArrayList&lt;&gt;();
+        serialize(p, a);
+        serialize(q, b);
+        return a.equals(b);
+    }
+
+    private void serialize(TreeNode node, List&lt;Integer&gt; out) {
+        if (node == null) {
+            out.add(null); // null markers are REQUIRED to preserve structure
+            return;
+        }
+        out.add(node.val);
+        serialize(node.left, out);
+        serialize(node.right, out);
+    }
+}
+// Time: O(N), Space: O(N) for the two lists
+// Works, but allocates 2N memory and always walks the full tree — even when
+// a mismatch at the root could let us short-circuit immediately.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Synchronous Depth-First Search (DFS) / Recursion</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Stand on the root of both trees simultaneously. Ask 3 questions: 1. Both null? (Match!) 2. One null? (Mismatch!) 3. Values different? (Mismatch!). If all pass, recursively check left and right children.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) return true;
+        if (p == null || q == null) return false;
+        if (p.val != q.val) return false;
+        
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N) where N is smaller tree size.<br><strong>Space:</strong> O(H) recursion stack.</div>
+        </div>
+    
+        <div class="problem-card" id="144">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">144. Binary Tree Preorder Traversal</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty Tree (<code>root == null</code>), Single Node, Left-skewed or Right-skewed degenerate tree.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Serializing/cloning trees (root-first order lets you rebuild structure on the way down), printing directory hierarchies, expression tree evaluation in prefix (Polish) notation.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Standard recursion. Correct and clean, but a deeply skewed tree can blow the JVM call stack.</div>
+<pre class="brute"><code>// Brute Force: recursive preorder — root, left, right
+class Solution {
+    public List&lt;Integer&gt; preorderTraversal(TreeNode root) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        helper(root, result);
+        return result;
+    }
+
+    private void helper(TreeNode node, List&lt;Integer&gt; result) {
+        if (node == null) return;
+        result.add(node.val);         // root
+        helper(node.left, result);    // left
+        helper(node.right, result);   // right
+    }
+}
+// Time: O(N), Space: O(H) call stack
+// Works, but the iterative version uses heap memory for the stack,
+// which survives much deeper trees than the JVM call stack can.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>DFS + Explicit Stack (Push Right Before Left)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Push root onto a stack. Loop: pop a node, record its value, then push its <em>right</em> child first, then its <em>left</em>. Because stack is LIFO, left comes out next — giving preorder (root → left → right).</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public List&lt;Integer&gt; preorderTraversal(TreeNode root) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        if (root == null) return result;
+
+        Deque&lt;TreeNode&gt; stack = new ArrayDeque&lt;&gt;();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            result.add(node.val);              // visit root
+
+            // Push right FIRST so left is processed next (LIFO)
+            if (node.right != null) stack.push(node.right);
+            if (node.left != null)  stack.push(node.left);
+        }
+        return result;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(H) where H is tree height (worst case O(N) for a skewed tree).</div>
+        </div>
+    
+        <div class="problem-card" id="145">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">145. Binary Tree Postorder Traversal</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty Tree, Single Node, Fully left-skewed tree (all children are left children).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Safely deleting trees bottom-up (free children before parent — kernel memory management does this), evaluating expression trees (compute operands before operator), calculating directory sizes (children's sizes must be known before parent).</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Standard recursion — "left, right, root" ordering. Clean, but same call stack risk as the other traversals on degenerate trees.</div>
+<pre class="brute"><code>// Brute Force: recursive postorder — left, right, root
+class Solution {
+    public List&lt;Integer&gt; postorderTraversal(TreeNode root) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        helper(root, result);
+        return result;
+    }
+
+    private void helper(TreeNode node, List&lt;Integer&gt; result) {
+        if (node == null) return;
+        helper(node.left, result);    // left
+        helper(node.right, result);   // right
+        result.add(node.val);         // root (visited LAST)
+    }
+}
+// Time: O(N), Space: O(H) call stack</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Reverse-Preorder Trick (Root-Right-Left, then reverse)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">True iterative postorder is tricky because you need to visit a node <em>after</em> both its children. The clever hack: do a modified preorder where you push <em>left first, right second</em> — this gives "root, right, left" order. Then <strong>reverse</strong> the result list to get "left, right, root" — which is postorder.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public List&lt;Integer&gt; postorderTraversal(TreeNode root) {
+        LinkedList&lt;Integer&gt; result = new LinkedList&lt;&gt;();
+        if (root == null) return result;
+
+        Deque&lt;TreeNode&gt; stack = new ArrayDeque&lt;&gt;();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            result.addFirst(node.val); // prepend — reverses the traversal
+
+            // Push left FIRST so right is processed next (LIFO)
+            if (node.left != null)  stack.push(node.left);
+            if (node.right != null) stack.push(node.right);
+        }
+        return result;
+    }
+}
+// addFirst on LinkedList is O(1), so we get reversal "for free"
+// without a separate Collections.reverse() pass.</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(H) for the stack, O(N) for the result list.</div>
+        </div>
+    
+        <div class="problem-card" id="496">
+            <span class="tag">Stack</span>
+            <h2 class="problem-title">496. Next Greater Element I</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty arrays, elements in strictly descending order (no greater element exists).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Financial market stop-loss triggers, querying related data streams where one determines the limits of another.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">For every element in nums1, find it in nums2, then scan right to find the next greater element. O(N * M) time complexity.</div>
+<pre class="brute"><code>// Brute Force: for each query, linear scan nums2
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] res = new int[nums1.length];
+        for (int i = 0; i &lt; nums1.length; i++) {
+            res[i] = -1;
+            int j = 0;
+            // 1) locate nums1[i] inside nums2
+            while (j &lt; nums2.length &amp;&amp; nums2[j] != nums1[i]) j++;
+            // 2) scan forward for the first greater value
+            for (int k = j + 1; k &lt; nums2.length; k++) {
+                if (nums2[k] &gt; nums1[i]) {
+                    res[i] = nums2[k];
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+}
+// Time: O(N * M), Space: O(1) extra</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Monotonic Decreasing Stack + HashMap</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Iterate through nums2. Keep a monotonic decreasing stack of values. If current value > stack top, pop stack and map popped value -> current value. Finally, loop through nums1 and fetch answers from the map.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> nextGreater = new HashMap<>();
+        Stack<Integer> stack = new Stack<>();
+        
+        for (int num : nums2) {
+            while (!stack.isEmpty() && num > stack.peek()) {
+                nextGreater.put(stack.pop(), num);
+            }
+            stack.push(num);
+        }
+        
+        int[] res = new int[nums1.length];
+        for (int i = 0; i < nums1.length; i++) {
+            res[i] = nextGreater.getOrDefault(nums1[i], -1);
+        }
+        return res;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N + M)<br><strong>Space:</strong> O(N) for map and stack.</div>
+        </div>
+    
+        <div class="problem-card" id="739">
+            <span class="tag">Monotonic Stack</span>
+            <h2 class="problem-title">739. Daily Temperatures</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Temperatures strictly decreasing (all answers 0).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Weather forecasting dashboards, financial stock waiting periods.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">For each day, scan the rest of the array forward to find a warmer day. O(N²) time complexity.</div>
+<pre class="brute"><code>// Brute Force: nested loop — for each day, look ahead until warmer
+class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+        int n = temperatures.length;
+        int[] result = new int[n];
+        for (int i = 0; i &lt; n; i++) {
+            for (int j = i + 1; j &lt; n; j++) {
+                if (temperatures[j] &gt; temperatures[i]) {
+                    result[i] = j - i;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+}
+// Time: O(N^2) — TLE on LeetCode (N up to 10^5)
+// Space: O(1) extra</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Monotonic Decreasing Stack (Storing Indices)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Iterate through array. Store indices in stack. If current temp > temp at stack top, pop the index. Calculate difference (current index - popped index) and store in result array.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+        int[] result = new int[temperatures.length];
+        Stack<Integer> stack = new Stack<>(); // Stores indices
+        
+        for (int i = 0; i < temperatures.length; i++) {
+            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {
+                int prevIndex = stack.pop();
+                result[prevIndex] = i - prevIndex;
+            }
+            stack.push(i);
+        }
+        return result;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N) for the stack.</div>
+        </div>
+    
+        <div class="problem-card" id="84">
+            <span class="tag">Monotonic Stack</span>
+            <h2 class="problem-title">84. Largest Rectangle in Histogram</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">All bars same height, strictly increasing or strictly decreasing histograms.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">UI layout engines rendering bounding boxes, skyline silhouette calculations.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Expand left and right from every single bar until hitting a shorter bar. O(N²) time complexity.</div>
+<pre class="brute"><code>// Brute Force: for each bar, expand outwards to find its max rectangle
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int n = heights.length;
+        int maxArea = 0;
+        for (int i = 0; i &lt; n; i++) {
+            int h = heights[i];
+            int left = i, right = i;
+            while (left - 1 &gt;= 0 &amp;&amp; heights[left - 1] &gt;= h) left--;
+            while (right + 1 &lt; n &amp;&amp; heights[right + 1] &gt;= h) right++;
+            maxArea = Math.max(maxArea, h * (right - left + 1));
+        }
+        return maxArea;
+    }
+}
+// Time: O(N^2) — TLE when N is large
+// Space: O(1) extra
+// Intuition: this does the right thing but re-walks the same bars over and
+// over. The monotonic stack version computes the same "left/right boundary"
+// in a single amortized O(N) pass.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Monotonic Increasing Stack (Index, Height)</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Maintain a stack of increasing heights. When a shorter bar appears, it acts as a boundary. Pop the taller bars, calculating their area: `height * (current index - popped index)`. Push the new bar but borrow the popped index.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int largestRectangleArea(int[] heights) {
+        Stack<int[]> stack = new Stack<>(); // [index, height]
+        int maxArea = 0;
+        
+        for (int i = 0; i < heights.length; i++) {
+            int start = i;
+            while (!stack.isEmpty() && stack.peek()[1] > heights[i]) {
+                int[] popped = stack.pop();
+                maxArea = Math.max(maxArea, popped[1] * (i - popped[0]));
+                start = popped[0]; // Borrow the index!
+            }
+            stack.push(new int[]{start, heights[i]});
+        }
+        
+        // Resolve remaining bars in stack
+        for (int[] element : stack) {
+            maxArea = Math.max(maxArea, element[1] * (heights.length - element[0]));
+        }
+        return maxArea;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
+        </div>
+    
+        <div class="problem-card" id="203">
+            <span class="tag">Linked List</span>
+            <h2 class="problem-title">203. Remove Linked List Elements</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">List is empty, all elements in list match the target value.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Filtering data streams, sanitizing active connection linked lists in networking.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Try to handle the head separately using special if-statements, then loop. Leads to messy code and missed edge cases.</div>
+<pre class="brute"><code>// Brute Force: handle head separately, then handle the rest
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        // Step 1: strip off matching nodes from the front
+        while (head != null &amp;&amp; head.val == val) {
+            head = head.next;
+        }
+        // Step 2: handle the interior
+        ListNode curr = head;
+        while (curr != null &amp;&amp; curr.next != null) {
+            if (curr.next.val == val) {
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+        return head;
+    }
+}
+// Time: O(N), Space: O(1)
+// Correct, but splits the logic into two loops. Easy to mis-handle edge
+// cases like all-matching lists. The dummy-node version unifies both paths.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Dummy Node Pattern</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Create a dummy node pointing to head. Traverse using a `curr` pointer starting at dummy. If `curr.next.val == target`, skip it (`curr.next = curr.next.next`). Otherwise, move `curr` forward.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode curr = dummy;
+        
+        while (curr.next != null) {
+            if (curr.next.val == val) {
+                curr.next = curr.next.next; // Skip node
+            } else {
+                curr = curr.next; // Move forward
+            }
+        }
+        return dummy.next;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(1)</div>
+        </div>
+    
+        <div class="problem-card" id="3217">
+            <span class="tag">Linked List</span>
+            <h2 class="problem-title">3217. Delete Nodes From Linked List Present in Array</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Array has millions of elements, all nodes in list get deleted.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Database bulk row deletion (e.g. DELETE FROM table WHERE id IN (list)).</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">For every node, iterate through the entire array to check if the value exists. O(N * M) time.</div>
+<pre class="brute"><code>// Brute Force: linear-scan the array for every linked list node
+class Solution {
+    public ListNode modifiedList(int[] nums, ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode curr = dummy;
+
+        while (curr.next != null) {
+            if (contains(nums, curr.next.val)) {
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    private boolean contains(int[] nums, int target) {
+        for (int n : nums) if (n == target) return true;
+        return false;
+    }
+}
+// Time: O(N * M), Space: O(1) extra
+// The HashSet version turns the inner O(M) scan into O(1) lookup.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>HashSet Lookup + Dummy Node</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">First, convert the array into a HashSet for O(1) lookups. Then use the standard Dummy Node pattern to traverse and delete nodes that exist in the set.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public ListNode modifiedList(int[] nums, ListNode head) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) set.add(num);
+        
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode curr = dummy;
+        
+        while (curr.next != null) {
+            if (set.contains(curr.next.val)) {
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+        return dummy.next;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N + M)<br><strong>Space:</strong> O(M) for the HashSet</div>
+        </div>
+    
+        <div class="problem-card" id="21">
+            <span class="tag">Linked List</span>
+            <h2 class="problem-title">21. Merge Two Sorted Lists</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">One list is empty, both lists are empty.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Merge sort subroutine, combining chronologically sorted log files.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Dump all nodes into an array, sort the array, and build a brand new linked list. O((N+M) log(N+M)) time.</div>
+<pre class="brute"><code>// Brute Force: collect all values, sort, rebuild a new list
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        List&lt;Integer&gt; values = new ArrayList&lt;&gt;();
+        while (list1 != null) { values.add(list1.val); list1 = list1.next; }
+        while (list2 != null) { values.add(list2.val); list2 = list2.next; }
+
+        Collections.sort(values);
+
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        for (int v : values) {
+            tail.next = new ListNode(v);
+            tail = tail.next;
+        }
+        return dummy.next;
+    }
+}
+// Time: O((N+M) log(N+M)), Space: O(N+M)
+// Throws away the fact that both inputs are already sorted — classic sign
+// there's a faster merge-based solution that just walks both lists in parallel.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Dummy Node + Two Pointers</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Use a dummy node to anchor the result. Use a `tail` pointer. Compare `list1.val` and `list2.val`, attach the smaller one to `tail.next`, and advance that list's pointer. Finally, attach any remaining nodes from the non-empty list.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        
+        while (list1 != null && list2 != null) {
+            if (list1.val < list2.val) {
+                tail.next = list1;
+                list1 = list1.next;
+            } else {
+                tail.next = list2;
+                list2 = list2.next;
+            }
+            tail = tail.next;
+        }
+        
+        // Attach remainder
+        if (list1 != null) tail.next = list1;
+        if (list2 != null) tail.next = list2;
+        
+        return dummy.next;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N + M)<br><strong>Space:</strong> O(1) in-place merging</div>
+        </div>
+    
+        <div class="problem-card" id="682">
+            <span class="tag">Stack</span>
+            <h2 class="problem-title">682. Baseball Game</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty operations list, negative numbers, multiple consecutive invalidations.</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Custom rule calculation engines, implementing 'Undo' functionality in text editors.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Use an array with manual index manipulation to keep track of the end of the list. Prone to off-by-one errors.</div>
+<pre class="brute"><code>// Brute Force: fixed-size array with a manually-tracked "size" pointer
+class Solution {
+    public int calPoints(String[] operations) {
+        int[] scores = new int[operations.length];
+        int size = 0;
+
+        for (String op : operations) {
+            if (op.equals("C")) {
+                size--; // invalidate previous
+            } else if (op.equals("D")) {
+                scores[size] = 2 * scores[size - 1];
+                size++;
+            } else if (op.equals("+")) {
+                scores[size] = scores[size - 1] + scores[size - 2];
+                size++;
+            } else {
+                scores[size++] = Integer.parseInt(op);
+            }
+        }
+
+        int sum = 0;
+        for (int i = 0; i &lt; size; i++) sum += scores[i];
+        return sum;
+    }
+}
+// Time: O(N), Space: O(N)
+// Same complexity as the stack version — but juggling `size` manually is
+// easy to get wrong. Stack abstracts that away (push/pop/peek read naturally).</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>The Stack</strong></div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Iterate over operations. Use a Stack. 'C' -> pop. 'D' -> peek and push double. '+' -> pop top, peek new top, calculate sum, push both back plus the sum. Otherwise -> parse integer and push.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public int calPoints(String[] operations) {
+        Stack<Integer> stack = new Stack<>();
+        
+        for (String op : operations) {
+            if (op.equals("+")) {
+                int top1 = stack.pop();
+                int top2 = stack.peek();
+                stack.push(top1);
+                stack.push(top1 + top2);
+            } else if (op.equals("D")) {
+                stack.push(2 * stack.peek());
+            } else if (op.equals("C")) {
+                stack.pop();
+            } else {
+                stack.push(Integer.parseInt(op));
+            }
+        }
+        
+        int sum = 0;
+        for (int score : stack) {
+            sum += score;
+        }
+        return sum;
+    }
+}</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
+        </div>
+    
+
+    </div>
+    <script>
+        (function () {
+            const select = document.getElementById('category-filter');
+            const countEl = document.getElementById('filter-count');
+            const cards = Array.from(document.querySelectorAll('.problem-card'));
+            const tocLinks = Array.from(document.querySelectorAll('.toc a'));
+
+            // Build map: problem id -> category (from the tag inside the card)
+            const idToCategory = {};
+            const categories = new Set();
+            cards.forEach(card => {
+                const tag = card.querySelector('.tag');
+                const category = tag ? tag.textContent.trim() : 'Other';
+                idToCategory[card.id] = category;
+                categories.add(category);
+            });
+
+            // Populate the select options (alphabetical)
+            Array.from(categories).sort().forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                select.appendChild(opt);
+            });
+
+            function applyFilter(value) {
+                let visible = 0;
+                cards.forEach(card => {
+                    const match = value === 'all' || idToCategory[card.id] === value;
+                    card.classList.toggle('hidden', !match);
+                    if (match) visible++;
+                });
+
+                // Keep TOC in sync — hide links whose target is hidden
+                tocLinks.forEach(link => {
+                    const targetId = link.getAttribute('href').replace('#', '');
+                    const match = value === 'all' || idToCategory[targetId] === value;
+                    link.parentElement.classList.toggle('hidden', !match);
+                });
+
+                countEl.textContent = `Showing ${visible} of ${cards.length} problems`;
+            }
+
+            select.addEventListener('change', e => applyFilter(e.target.value));
+            applyFilter('all');
+        })();
+    </script>
+</body>
+</html>
