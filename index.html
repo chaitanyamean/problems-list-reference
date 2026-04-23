@@ -1444,6 +1444,82 @@ class Solution {
             <div class="content-block"><strong>Time:</strong> O(N)<br><strong>Space:</strong> O(N)</div>
         </div>
 
+            <div class="problem-card" id="101">
+            <span class="tag">Binary Tree</span>
+            <h2 class="problem-title">101. Symmetric Tree</h2>
+            
+            <div class="section-title">⚠️ Edge Cases</div>
+            <div class="content-block">Empty Tree (trivially symmetric), Single Node, Asymmetric shape even when values match (e.g. <code>[1,2,2,null,3,null,3]</code> — values look fine but structure is mirrored wrong).</div>
+
+            <div class="section-title">🌍 Real-World Applications</div>
+            <div class="content-block">Detecting palindromic data structures, validating UI layout symmetry, image mirror-symmetry detection, chemistry molecule symmetry checks.</div>
+
+            <div class="section-title">🐢 The Brute Force Approach</div>
+            <div class="content-block">Serialize the left subtree left-to-right and the right subtree right-to-left into two lists, then compare them. Works, but allocates O(N) extra memory and always walks the full tree — even when a mismatch at the top could let us bail out immediately.</div>
+<pre class="brute"><code>// Brute Force: build left-to-right and right-to-left serializations, compare
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+        List&lt;Integer&gt; leftOrder  = new ArrayList&lt;&gt;();
+        List&lt;Integer&gt; rightOrder = new ArrayList&lt;&gt;();
+        dfsLeft(root.left, leftOrder);
+        dfsRight(root.right, rightOrder);
+        return leftOrder.equals(rightOrder);
+    }
+
+    // Normal preorder: root, left, right
+    private void dfsLeft(TreeNode node, List&lt;Integer&gt; out) {
+        if (node == null) { out.add(null); return; }
+        out.add(node.val);
+        dfsLeft(node.left, out);
+        dfsLeft(node.right, out);
+    }
+
+    // Mirrored preorder: root, right, left
+    private void dfsRight(TreeNode node, List&lt;Integer&gt; out) {
+        if (node == null) { out.add(null); return; }
+        out.add(node.val);
+        dfsRight(node.right, out);
+        dfsRight(node.left, out);
+    }
+}
+// Time: O(N), Space: O(N) for the two lists
+// Null markers are REQUIRED — without them, [1,2] and [1,null,2] look the same.</code></pre>
+
+            <div class="section-title">🧩 Pattern</div>
+            <div class="content-block"><strong>Mirrored DFS / Two-Pointer Recursion</strong> — same skeleton as Same Tree (LC 100), but pair the children CROSSED: <code>left &#8596; right</code> instead of <code>left &#8596; left</code>.</div>
+
+            <div class="section-title">🚀 The Optimal Strategy</div>
+            <div class="content-block">Compare the left and right subtrees as mirror images using two pointers <code>p</code> and <code>q</code>. At each step ask 3 questions: 1. Both null? (Mirror match!) 2. Exactly one null? (Mismatch!) 3. Values differ? (Mismatch!). If all pass, recurse on the <em>outer</em> pair (<code>p.left</code> vs <code>q.right</code>) AND the <em>inner</em> pair (<code>p.right</code> vs <code>q.left</code>). Both must match.</div>
+
+            <div class="section-title">☕ The Java Code <span class="code-label optimal">Optimal</span></div>
+<pre class="optimal"><code>class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+        return checkSubTrees(root.left, root.right);
+    }
+
+    private boolean checkSubTrees(TreeNode p, TreeNode q) {
+        // Case 1: both null -> mirror match
+        if (p == null &amp;&amp; q == null) return true;
+
+        // Case 2: exactly one null -> structural mismatch
+        if (p == null || q == null) return false;
+
+        // Case 3: values must match AND mirror children must match
+        return p.val == q.val
+            &amp;&amp; checkSubTrees(p.left,  q.right)   // outer pair
+            &amp;&amp; checkSubTrees(p.right, q.left);   // inner pair
+    }
+}
+// Key insight: this is LC 100 (Same Tree) with the child pairing CROSSED.
+//   Same Tree:      recurse(p.left, q.left)  AND recurse(p.right, q.right)
+//   Symmetric Tree: recurse(p.left, q.right) AND recurse(p.right, q.left)</code></pre>
+
+            <div class="section-title">📊 Complexity</div>
+            <div class="content-block"><strong>Time:</strong> O(N) — visits each node once.<br><strong>Space:</strong> O(H) recursion stack — O(log N) balanced, O(N) worst case for a skewed tree.</div>
+        </div>
+
 
     </div>
     <script>
